@@ -51,11 +51,51 @@ rule C_COMPILER__project_unscanned_Debug
 
 
 #############################################
-# Rule for linking C executable.
+# Rule for generating CXX dependencies.
 
-rule C_EXECUTABLE_LINKER__project_Debug
-  command = C:\Windows\system32\cmd.exe /C "$PRE_LINK && E:\tool\arm\arm-gnu-toolchain-14.3.rel1-mingw-w64-i686-arm-none-eabi\bin\arm-none-eabi-gcc.exe $FLAGS $LINK_FLAGS $in -o $TARGET_FILE $LINK_PATH $LINK_LIBRARIES && $POST_BUILD"
-  description = Linking C executable $TARGET_FILE; Building E:/RM/project/build/Debug/project.hex Building E:/RM/project/build/Debug/project.bin
+rule CXX_SCAN__project_Debug
+  depfile = $DEP_FILE
+  command = E:\tool\arm\arm-gnu-toolchain-14.3.rel1-mingw-w64-i686-arm-none-eabi\bin\arm-none-eabi-g++.exe $DEFINES $INCLUDES $FLAGS -E -x c++ $in -MT $DYNDEP_INTERMEDIATE_FILE -MD -MF $DEP_FILE -fmodules-ts -fdeps-file=$DYNDEP_INTERMEDIATE_FILE -fdeps-target=$OBJ_FILE -fdeps-format=p1689r5 -o $PREPROCESSED_OUTPUT_FILE
+  description = Scanning $in for CXX dependencies
+
+
+#############################################
+# Rule to generate ninja dyndep files for CXX.
+
+rule CXX_DYNDEP__project_Debug
+  command = E:\tool\cmake-4.1.0-windows-x86_64\bin\cmake.exe -E cmake_ninja_dyndep --tdi=CMakeFiles\project.dir\CXXDependInfo.json --lang=CXX --modmapfmt=gcc --dd=$out @$out.rsp
+  description = Generating CXX dyndep file $out
+  rspfile = $out.rsp
+  rspfile_content = $in
+  restat = 1
+
+
+#############################################
+# Rule for compiling CXX files.
+
+rule CXX_COMPILER__project_scanned_Debug
+  depfile = $DEP_FILE
+  deps = gcc
+  command = ${LAUNCHER}${CODE_CHECK}E:\tool\arm\arm-gnu-toolchain-14.3.rel1-mingw-w64-i686-arm-none-eabi\bin\arm-none-eabi-g++.exe $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -fmodules-ts -fmodule-mapper=$DYNDEP_MODULE_MAP_FILE -MD -fdeps-format=p1689r5 -x c++ -o $out -c $in
+  description = Building CXX object $out
+
+
+#############################################
+# Rule for compiling CXX files.
+
+rule CXX_COMPILER__project_unscanned_Debug
+  depfile = $DEP_FILE
+  deps = gcc
+  command = ${LAUNCHER}${CODE_CHECK}E:\tool\arm\arm-gnu-toolchain-14.3.rel1-mingw-w64-i686-arm-none-eabi\bin\arm-none-eabi-g++.exe $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
+  description = Building CXX object $out
+
+
+#############################################
+# Rule for linking CXX executable.
+
+rule CXX_EXECUTABLE_LINKER__project_Debug
+  command = C:\Windows\system32\cmd.exe /C "$PRE_LINK && E:\tool\arm\arm-gnu-toolchain-14.3.rel1-mingw-w64-i686-arm-none-eabi\bin\arm-none-eabi-g++.exe $FLAGS $LINK_FLAGS $in -o $TARGET_FILE $LINK_PATH $LINK_LIBRARIES && $POST_BUILD"
+  description = Linking CXX executable $TARGET_FILE; Building E:/RM/project/build/Debug/project.hex Building E:/RM/project/build/Debug/project.bin
   restat = $RESTAT
 
 
