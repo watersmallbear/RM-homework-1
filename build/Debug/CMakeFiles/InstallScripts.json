@@ -1,8 +1,0 @@
-{
-	"InstallScripts" : 
-	[
-		"E:/RM/project/build/Debug/cmake_install.cmake",
-		"E:/RM/project/build/Debug/cmake/stm32cubemx/cmake_install.cmake"
-	],
-	"Parallel" : false
-}
